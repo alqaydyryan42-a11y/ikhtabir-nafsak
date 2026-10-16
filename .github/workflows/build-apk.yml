@@ -31,6 +31,9 @@ jobs:
           flutter create --project-name ikhtabir_nafsak --org com.ikhtabirnafsak .
         fi
 
+    - name: Apply custom app code
+      run: cp custom_app/main.dart lib/main.dart
+
     - name: Get dependencies
       run: flutter pub get
 
