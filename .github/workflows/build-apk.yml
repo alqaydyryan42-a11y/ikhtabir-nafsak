@@ -1,9 +1,9 @@
 name: Build Flutter APK
 
 on:
-  workflow_dispatch: # يسمح لك بتشغيل البناء يدويًا
+  workflow_dispatch:
   push:
-    branches: [ main, master ] # يعمل تلقائيًا عند الرفع
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -24,6 +24,12 @@ jobs:
       with:
         channel: 'stable'
         cache: true
+
+    - name: Create Flutter project if not exists
+      run: |
+        if [ ! -f pubspec.yaml ]; then
+          flutter create --project-name ikhtabir_nafsak --org com.ikhtabirnafsak .
+        fi
 
     - name: Get dependencies
       run: flutter pub get
