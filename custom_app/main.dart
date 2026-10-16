@@ -16,6 +16,7 @@ class C {
   static const warning = Color(0xFFF59E0B);
   static const error = Color(0xFFEF4444);
   static const orange = Color(0xFFF97316);
+  static const pink = Color(0xFFEC4899);
   static const textMain = Colors.white;
   static const textSoft = Color(0xFFB8B5D6);
   static const textMuted = Color(0xFF7B7899);
@@ -76,7 +77,7 @@ class IkhtabirApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'أختبر نفسك',
+      title: 'اختبر نفسك',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -118,10 +119,10 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              const RJLogo(size: 140),
+              const RJLogo(size: 160),
               const SizedBox(height: 24),
-              const Text('أختبر نفسك',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold,
+              const Text('اختبر نفسك',
+                style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold,
                   color: Colors.white, letterSpacing: 1)),
               const SizedBox(height: 8),
               Text('كل معلومة خطوة أقرب لفهمك',
@@ -143,43 +144,130 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// ═══════════ RJ Logo ═══════════
+// ═══════════ RJ Logo (قلب + تاج + RJ) ═══════════
 class RJLogo extends StatelessWidget {
   final double size;
   const RJLogo({super.key, this.size = 120});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size, height: size,
+      width: size,
+      height: size * 1.15,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(color: C.purple.withOpacity(0.5),
-                  blurRadius: 40, spreadRadius: 5),
-                BoxShadow(color: C.blue.withOpacity(0.3),
-                  blurRadius: 60, spreadRadius: 10),
-              ])),
-          Icon(Icons.favorite_rounded, size: size * 0.9,
-            color: Colors.transparent,
-            shadows: [Shadow(color: C.purpleLt, blurRadius: 20)]),
-          ShaderMask(
-            shaderCallback: (r) => const LinearGradient(
-              colors: [C.purpleLt, C.blueLt, C.cyan],
-              begin: Alignment.topRight, end: Alignment.bottomLeft,
-            ).createShader(r),
-            child: Text('RJ',
+          // التوهج الخارجي
+          Positioned(
+            top: size * 0.2,
+            child: Container(
+              width: size * 1.1,
+              height: size * 0.9,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    C.purple.withOpacity(0.55),
+                    C.blue.withOpacity(0.25),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // القلب مملوء بتدرج
+          Positioned(
+            top: size * 0.22,
+            child: ShaderMask(
+              shaderCallback: (r) => const LinearGradient(
+                colors: [Color(0xFFB794F6), Color(0xFF6366F1), Color(0xFF3B82F6)],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ).createShader(r),
+              child: Icon(
+                Icons.favorite,
+                size: size * 0.82,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          // حدود القلب الخارجية بنفسجية متوهجة
+          Positioned(
+            top: size * 0.22,
+            child: Icon(
+              Icons.favorite_border,
+              size: size * 0.9,
+              color: const Color(0xFFB794F6).withOpacity(0.7),
+              shadows: [
+                Shadow(color: C.purpleLt, blurRadius: 12),
+                Shadow(color: C.cyan, blurRadius: 20),
+              ],
+            ),
+          ),
+          // التاج أعلى القلب
+          Positioned(
+            top: size * 0.02,
+            child: CustomPaint(
+              size: Size(size * 0.32, size * 0.16),
+              painter: _CrownPainter(),
+            ),
+          ),
+          // حروف RJ داخل القلب
+          Positioned(
+            top: size * 0.42,
+            child: Text(
+              'RJ',
               style: TextStyle(
-                fontSize: size * 0.42, fontWeight: FontWeight.w900,
-                color: Colors.white, letterSpacing: -2)),
+                fontSize: size * 0.28,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                fontStyle: FontStyle.italic,
+                letterSpacing: -3,
+                shadows: [
+                  Shadow(color: Colors.white.withOpacity(0.9), blurRadius: 8),
+                  Shadow(color: const Color(0xFFB794F6), blurRadius: 16),
+                  Shadow(color: C.blueLt, blurRadius: 24),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+}
+
+class _CrownPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFB794F6), Color(0xFF22D3EE), Color(0xFF60A5FA)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    final path = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * 0.35)
+      ..lineTo(size.width * 0.25, size.height * 0.65)
+      ..lineTo(size.width * 0.5, 0)
+      ..lineTo(size.width * 0.75, size.height * 0.65)
+      ..lineTo(size.width, size.height * 0.35)
+      ..lineTo(size.width, size.height)
+      ..close();
+
+    canvas.drawPath(path, paint);
+
+    // نقطة صغيرة لامعة على قمة التاج
+    final dotPaint = Paint()..color = C.cyan;
+    canvas.drawCircle(
+      Offset(size.width * 0.5, size.height * 0.05),
+      size.width * 0.05, dotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ═══════════ Main Shell ═══════════
@@ -1227,10 +1315,10 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const RJLogo(size: 120),
+            const RJLogo(size: 140),
             const SizedBox(height: 20),
-            const Text('أختبر نفسك',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,
+            const Text('اختبر نفسك',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold,
                 color: C.textMain)),
             const SizedBox(height: 8),
             const Text('كل يوم خطوة نحو النجاح',
